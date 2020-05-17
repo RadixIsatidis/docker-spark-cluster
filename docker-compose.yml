@@ -1,4 +1,7 @@
 version: "3.7"
+networks:
+  spark-network:
+    name: spark-network
 services:
   spark-master:
     image: spydernaz/spark-master:latest
@@ -10,8 +13,12 @@ services:
        - ./data:/opt/spark-data
     environment:
       - "SPARK_LOCAL_IP=spark-master"
+    networks:
+      - spark-network
   spark-worker:
     image: spydernaz/spark-worker:latest
+    ports:
+      - "9091-9095:8081"
     depends_on:
       - spark-master
     environment:
@@ -23,3 +30,5 @@ services:
     volumes:
        - ./apps:/opt/spark-apps
        - ./data:/opt/spark-data
+    networks:
+      - spark-network

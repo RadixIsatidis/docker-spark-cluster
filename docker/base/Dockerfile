@@ -1,5 +1,5 @@
 FROM openjdk:8u212-b04-jdk-stretch
-LABEL author="Nathaniel Vala" email="nathanielvala@hotmail.com"
+LABEL author="YanLeaon Lai" email="yanleaon@live.com"
 LABEL version="0.2"
 
 ENV DAEMON_RUN=true
@@ -8,7 +8,9 @@ ENV HADOOP_VERSION=2.7
 ENV SCALA_VERSION=2.12.4
 ENV SCALA_HOME=/usr/share/scala
 ENV SPARK_HOME=/spark
-
+# ENV HTTP_PROXY="http://host.docker.internal:8085"	
+# ENV HTTP_PROXY="http://host.docker.internal:8085"
+# ENV NO_PROXY="10.*,192.168.*,127.*,localhost"	
 
 RUN apt-get update && apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates jq
 
@@ -46,7 +48,7 @@ RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 
 #Scala instalation
 RUN export PATH="/usr/local/sbt/bin:$PATH" &&  apt update && apt install ca-certificates wget tar && mkdir -p "/usr/local/sbt" && wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.tgz" | tar xz -C /usr/local/sbt --strip-components=1 && sbt sbtVersion
 
-RUN wget --no-verbose http://apache.mirror.iphh.net/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+RUN wget --no-verbose http://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
       && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark \
       && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
 

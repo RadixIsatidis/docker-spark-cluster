@@ -3,8 +3,14 @@ networks:
   spark-network:
     name: spark-network
 services:
+  zookeeper:
+    image: yanleaon/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - spark-network
   spark-master:
-    image: spydernaz/spark-master:latest
+    image: yanleaon/spark-master:latest
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -16,9 +22,9 @@ services:
     networks:
       - spark-network
   spark-worker:
-    image: spydernaz/spark-worker:latest
+    image: yanleaon/spark-worker:latest
     ports:
-      - "9091-9095:8081"
+      - "9091-9093:8081"
     depends_on:
       - spark-master
     links:
@@ -34,3 +40,36 @@ services:
        - ./data:/opt/spark-data
     networks:
       - spark-network
+    hbase-master-local:
+      image: yanleaon/hbase-master-local:2.1.0
+      volumes:
+        - ./data/hbase:/data
+      ports:
+        - 16000:16000
+        - 16010:16010
+      environment:
+        - MASTER_HOSTNAME=hbase-master-local
+        - ZOOKEEPER_QUORUM=zookeeper:2181
+        - REGIONSERVERS=hbase-local-regionserver
+      links:
+        - zookeeper
+      depends_on:
+        - zookeeper
+      networks:
+        - spark-network
+    hbase-regionserver-local:
+      image: yanleaon/hbase-regionserver-local:2.1.0
+      volumes:
+        - ./data/hbase:/data
+      ports:
+        - 16020:16020
+        - 16030:16030
+      environment:
+        - REGIONSERVER_HOSTNAME=hbase-regionserver-local
+        - ZOOKEEPER_QUORUM=zookeeper:2181
+      links:
+        - zookeeper
+      depends_on:
+        - zookeeper
+      networks:
+        - spark-network

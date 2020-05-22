@@ -15,8 +15,8 @@ services:
       - "9090:8080"
       - "7077:7077"
     volumes:
-       - ./apps:/opt/spark-apps
-       - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
     environment:
       - "SPARK_LOCAL_IP=spark-master"
     networks:
@@ -36,40 +36,40 @@ services:
       - SPARK_DRIVER_MEMORY=512m
       - SPARK_EXECUTOR_MEMORY=512m
     volumes:
-       - ./apps:/opt/spark-apps
-       - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
     networks:
       - spark-network
-    hbase-master-local:
-      image: yanleaon/hbase-master-local:2.1.0
-      volumes:
-        - ./data/hbase:/data
-      ports:
-        - 16000:16000
-        - 16010:16010
-      environment:
-        - MASTER_HOSTNAME=hbase-master-local
-        - ZOOKEEPER_QUORUM=zookeeper:2181
-        - REGIONSERVERS=hbase-local-regionserver
-      links:
-        - zookeeper
-      depends_on:
-        - zookeeper
-      networks:
-        - spark-network
-    hbase-regionserver-local:
-      image: yanleaon/hbase-regionserver-local:2.1.0
-      volumes:
-        - ./data/hbase:/data
-      ports:
-        - 16020:16020
-        - 16030:16030
-      environment:
-        - REGIONSERVER_HOSTNAME=hbase-regionserver-local
-        - ZOOKEEPER_QUORUM=zookeeper:2181
-      links:
-        - zookeeper
-      depends_on:
-        - zookeeper
-      networks:
-        - spark-network
+  hbase-master-local:
+    image: yanleaon/hbase-master-local:2.1.0
+    volumes:
+      - ./data/hbase:/data
+    ports:
+      - 16000:16000
+      - 16010:16010
+    environment:
+      - MASTER_HOSTNAME=hbase-master-local
+      - ZOOKEEPER_QUORUM=zookeeper:2181
+      - REGIONSERVERS=hbase-local-regionserver
+    links:
+      - zookeeper
+    depends_on:
+      - zookeeper
+    networks:
+      - spark-network
+  hbase-regionserver-local:
+    image: yanleaon/hbase-regionserver-local:2.1.0
+    volumes:
+      - ./data/hbase:/data
+    ports:
+      - 16020:16020
+      - 16030:16030
+    environment:
+      - REGIONSERVER_HOSTNAME=hbase-regionserver-local
+      - ZOOKEEPER_QUORUM=zookeeper:2181
+    links:
+      - zookeeper
+    depends_on:
+      - zookeeper
+    networks:
+      - spark-network
